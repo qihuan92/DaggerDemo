@@ -3,13 +3,13 @@ package com.qihuan.daggerdemo.detail;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.qihuan.annotationlib.dagger.AutoComponent;
+import com.qihuan.annotationlib.dagger.AutoBinding;
 import com.qihuan.daggerdemo.R;
 import com.qihuan.daggerdemo.base.BaseActivity;
 
 import javax.inject.Inject;
 
-@AutoComponent(modules = DetailModule.class)
+@AutoBinding(modules = DetailModule.class)
 public class DetailActivity extends BaseActivity implements DetailContract.View {
 
     @Inject

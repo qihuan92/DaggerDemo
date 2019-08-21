@@ -5,14 +5,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.qihuan.annotationlib.dagger.AutoComponent;
+import com.qihuan.annotationlib.dagger.AutoBinding;
 import com.qihuan.daggerdemo.R;
 import com.qihuan.daggerdemo.base.BaseActivity;
 import com.qihuan.daggerdemo.detail.DetailActivity;
 
 import javax.inject.Inject;
 
-@AutoComponent(modules = {MainModule.class})
+@AutoBinding(modules = {MainModule.class})
 public class MainActivity extends BaseActivity implements MainContract.View {
 
     @Inject

@@ -1,7 +1,7 @@
 package com.qihuan.generatorlib.dagger;
 
 import com.google.auto.service.AutoService;
-import com.qihuan.annotationlib.dagger.AutoComponent;
+import com.qihuan.annotationlib.dagger.AutoBinding;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -57,15 +57,15 @@ public class AutoComponentProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         LinkedHashSet<String> annotations = new LinkedHashSet<>();
-        annotations.add(AutoComponent.class.getCanonicalName());
+        annotations.add(AutoBinding.class.getCanonicalName());
         return annotations;
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        for (Element element : roundEnvironment.getElementsAnnotatedWith(AutoComponent.class)) {
+        for (Element element : roundEnvironment.getElementsAnnotatedWith(AutoBinding.class)) {
             if (element.getKind() != ElementKind.CLASS) {
-                error(element, "Only classes can be annotated with @%s", AutoComponent.class.getSimpleName());
+                error(element, "Only classes can be annotated with @%s", AutoBinding.class.getSimpleName());
                 return true;
             }
             autoComponentElementList.add(element);
@@ -78,7 +78,7 @@ public class AutoComponentProcessor extends AbstractProcessor {
         List<MethodSpec> methodSpecList = new ArrayList<>();
         for (Element element : autoComponentElementList) {
             // 获取注解中的 module
-            AutoComponent annotation = element.getAnnotation(AutoComponent.class);
+            AutoBinding annotation = element.getAnnotation(AutoBinding.class);
             List<TypeMirror> moduleTypeMirrorList = new ArrayList<>();
             try {
                 annotation.modules();
