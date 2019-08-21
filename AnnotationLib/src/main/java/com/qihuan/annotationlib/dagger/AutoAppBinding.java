@@ -6,13 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * AutoAppComponent
+ * AutoAppBinding
  *
  * @author qi
  * @date 2019-08-21
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.CLASS)
-public @interface AutoAppComponent {
+public @interface AutoAppBinding {
     Class<?>[] modules() default {};
 }

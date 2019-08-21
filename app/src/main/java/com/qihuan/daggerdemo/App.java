@@ -1,6 +1,6 @@
 package com.qihuan.daggerdemo;
 
-import com.qihuan.daggerdemo.di.component.DaggerAppComponent;
+import com.qihuan.annotationlib.dagger.AutoAppBinding;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
@@ -11,6 +11,7 @@ import dagger.android.DaggerApplication;
  * @author qi
  * @date 2019/4/17
  */
+@AutoAppBinding
 public class App extends DaggerApplication {
 
     @Override
