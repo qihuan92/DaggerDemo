@@ -1,6 +1,7 @@
 package com.qihuan.daggerdemo;
 
 import com.qihuan.annotationlib.dagger.AutoAppBinding;
+import com.qihuan.daggerdemo.di.DaggerAppComponent;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
