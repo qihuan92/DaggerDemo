@@ -9,11 +9,11 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.processing.Filer;
@@ -22,9 +22,14 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.util.Elements;
 
+import dagger.Binds;
 import dagger.BindsInstance;
 import dagger.Component;
+import dagger.Module;
 import dagger.android.AndroidInjector;
+
+import static com.qihuan.generatorlib.dagger.Const.COLLECTION_MODULE_NAME;
+import static com.qihuan.generatorlib.dagger.Const.DAGGER_GEN_PACKAGE;
 
 public class AppComponentProcessingStep implements BasicAnnotationProcessor.ProcessingStep {
 
@@ -45,28 +50,33 @@ public class AppComponentProcessingStep implements BasicAnnotationProcessor.Proc
 
     @Override
     public Set<? extends Element> process(SetMultimap<Class<? extends Annotation>, Element> setMultimap) {
-        Optional<Element> element = setMultimap.values().stream().findFirst();
-        element.ifPresent(this::generate);
-        return ImmutableSet.of(element.get());
+        setMultimap.forEach((annotationClass, element) -> {
+            if (annotationClass.isAssignableFrom(AutoAppBinding.class)) {
+                generate(element);
+            }
+        });
+        return ImmutableSet.of();
     }
 
     private void generate(Element element) {
         String packageName = elements.getPackageOf(element).toString() + ".di";
+        generateAppModule(element, packageName);
+        generateAppComponent(element, packageName);
+    }
+
+    private void generateAppComponent(Element element, String packageName) {
+        String componentName = element.getSimpleName().toString() + "Component";
 
         // Modules
         AnnotationSpec.Builder componentAnnotationBuilder = AnnotationSpec.builder(Component.class);
         componentAnnotationBuilder
                 .addMember("modules", "$T.class", ClassName.get(packageName, "AppModule"))
-                .addMember("modules", "$T.class", ClassName.get("com.qihuan.dagger", "AndroidBindingModule"))
+                .addMember("modules", "$T.class", ClassName.get(DAGGER_GEN_PACKAGE, COLLECTION_MODULE_NAME))
                 .addMember("modules", "$T.class", ClassName.get("dagger.android.support", "AndroidSupportInjectionModule"));
-//        for (Element moduleElement : autoModuleElementList) {
-//            note(moduleElement, "add");
-//            componentAnnotationBuilder.addMember("modules", "$T.class", ClassName.get(moduleElement.asType()));
-//        }
 
         JavaFile javaFile = JavaFile.builder(
                 packageName,
-                TypeSpec.interfaceBuilder("AppComponent")
+                TypeSpec.interfaceBuilder(componentName)
                         .addModifiers(Modifier.PUBLIC)
                         .addAnnotation(Singleton.class)
                         .addAnnotation(componentAnnotationBuilder.build())
@@ -89,6 +99,31 @@ public class AppComponentProcessingStep implements BasicAnnotationProcessor.Proc
                                                         .returns(ClassName.get(packageName, "AppComponent"))
                                                         .build()
                                         )
+                                        .build()
+                        )
+                        .build()
+        ).build();
+
+        try {
+            javaFile.writeTo(filer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void generateAppModule(Element element, String packageName) {
+        String moduleName = element.getSimpleName().toString() + "Module";
+        JavaFile javaFile = JavaFile.builder(
+                packageName,
+                TypeSpec.classBuilder(moduleName)
+                        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                        .addAnnotation(Module.class)
+                        .addMethod(
+                                MethodSpec.methodBuilder("inject" + element.getSimpleName().toString())
+                                        .addModifiers(Modifier.ABSTRACT)
+                                        .addAnnotation(Binds.class)
+                                        .addParameter(TypeName.get(element.asType()), element.getSimpleName().toString().toLowerCase())
+                                        .returns(ClassName.get("android.app", "Application"))
                                         .build()
                         )
                         .build()

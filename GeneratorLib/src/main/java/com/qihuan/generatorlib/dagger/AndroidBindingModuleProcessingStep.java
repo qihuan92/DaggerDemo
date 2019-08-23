@@ -27,6 +27,8 @@ import javax.lang.model.type.TypeMirror;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
+import static com.qihuan.generatorlib.dagger.Const.DAGGER_GEN_PACKAGE;
+
 public class AndroidBindingModuleProcessingStep implements BasicAnnotationProcessor.ProcessingStep {
 
     private Filer filer;
@@ -48,7 +50,7 @@ public class AndroidBindingModuleProcessingStep implements BasicAnnotationProces
         if (elementList.size() != 0) {
             generate(elementList);
         }
-        return ImmutableSet.copyOf(elementList);
+        return ImmutableSet.of();
     }
 
     private void generate(List<Element> elementList) {
@@ -79,7 +81,7 @@ public class AndroidBindingModuleProcessingStep implements BasicAnnotationProces
             );
         }
         JavaFile javaFile = JavaFile.builder(
-                "com.qihuan.dagger",
+                DAGGER_GEN_PACKAGE,
                 TypeSpec.classBuilder("AndroidBindingModule")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                         .addAnnotation(AutoModule.class)

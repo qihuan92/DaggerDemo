@@ -7,4 +7,6 @@ package com.qihuan.generatorlib.dagger;
  * @date 2019-08-22
  */
 public interface Const {
+    String DAGGER_GEN_PACKAGE = "dagger.gen";
+    String COLLECTION_MODULE_NAME = "CollectionModule";
 }
