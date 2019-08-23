@@ -1,6 +1,7 @@
 package com.qihuan.daggerdemo.detail;
 
 import com.qihuan.daggerdemo.base.AbsPresenter;
+import com.qihuan.daggerdemo.repository.DataRepository;
 
 import javax.inject.Inject;
 
@@ -13,12 +14,15 @@ import javax.inject.Inject;
 public class DetailPresenter extends AbsPresenter<DetailContract.View> implements DetailContract.Presenter {
 
     @Inject
+    DataRepository repository;
+
+    @Inject
     public DetailPresenter(DetailContract.View view) {
         super(view);
     }
 
     @Override
     public void getContent() {
-        getView().onContent("This is detail page.");
+        getView().onContent(repository.getContent());
     }
 }

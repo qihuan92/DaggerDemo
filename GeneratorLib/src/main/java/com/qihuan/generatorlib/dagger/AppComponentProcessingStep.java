@@ -28,6 +28,7 @@ import dagger.Component;
 import dagger.Module;
 import dagger.android.AndroidInjector;
 
+import static com.qihuan.generatorlib.dagger.Const.ANDROID_BINDING_MODULE_NAME;
 import static com.qihuan.generatorlib.dagger.Const.COLLECTION_MODULE_NAME;
 import static com.qihuan.generatorlib.dagger.Const.DAGGER_GEN_PACKAGE;
 
@@ -72,6 +73,7 @@ public class AppComponentProcessingStep implements BasicAnnotationProcessor.Proc
         componentAnnotationBuilder
                 .addMember("modules", "$T.class", ClassName.get(packageName, "AppModule"))
                 .addMember("modules", "$T.class", ClassName.get(DAGGER_GEN_PACKAGE, COLLECTION_MODULE_NAME))
+                .addMember("modules", "$T.class", ClassName.get(DAGGER_GEN_PACKAGE, ANDROID_BINDING_MODULE_NAME))
                 .addMember("modules", "$T.class", ClassName.get("dagger.android.support", "AndroidSupportInjectionModule"));
 
         JavaFile javaFile = JavaFile.builder(

@@ -4,7 +4,6 @@ import com.google.auto.common.BasicAnnotationProcessor;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.SetMultimap;
 import com.qihuan.annotationlib.dagger.AutoBinding;
-import com.qihuan.annotationlib.dagger.AutoModule;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -84,7 +83,6 @@ public class AndroidBindingModuleProcessingStep implements BasicAnnotationProces
                 DAGGER_GEN_PACKAGE,
                 TypeSpec.classBuilder("AndroidBindingModule")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                        .addAnnotation(AutoModule.class)
                         .addAnnotation(Module.class)
                         .addMethods(methodSpecList)
                         .build()

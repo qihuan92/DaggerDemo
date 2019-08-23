@@ -9,4 +9,5 @@ package com.qihuan.generatorlib.dagger;
 public interface Const {
     String DAGGER_GEN_PACKAGE = "dagger.gen";
     String COLLECTION_MODULE_NAME = "CollectionModule";
+    String ANDROID_BINDING_MODULE_NAME = "AndroidBindingModule";
 }
