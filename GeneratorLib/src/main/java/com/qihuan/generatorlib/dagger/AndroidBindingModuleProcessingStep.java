@@ -3,7 +3,9 @@ package com.qihuan.generatorlib.dagger;
 import com.google.auto.common.BasicAnnotationProcessor;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.SetMultimap;
+import com.qihuan.annotationlib.dagger.ActivityScoped;
 import com.qihuan.annotationlib.dagger.AutoBinding;
+import com.qihuan.annotationlib.dagger.FragmentScoped;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -55,7 +57,7 @@ public class AndroidBindingModuleProcessingStep implements BasicAnnotationProces
     private void generate(List<Element> elementList) {
         List<MethodSpec> methodSpecList = new ArrayList<>();
         for (Element element : elementList) {
-            // 获取注解中的 module
+            // get modules from AutoBinding
             AutoBinding annotation = element.getAnnotation(AutoBinding.class);
             List<TypeMirror> moduleTypeMirrorList = new ArrayList<>();
             try {
@@ -65,16 +67,32 @@ public class AndroidBindingModuleProcessingStep implements BasicAnnotationProces
                     moduleTypeMirrorList.addAll(e.getTypeMirrors());
                 }
             }
+
+            List<AnnotationSpec> annotationSpecList = new ArrayList<>();
+
+            // scope annotation
+            AnnotationSpec scopeAnnotationSpec = null;
+            if (element.getSimpleName().toString().contains("Activity")) {
+                scopeAnnotationSpec = AnnotationSpec.builder(ActivityScoped.class).build();
+            } else if (element.getSimpleName().toString().contains("Fragment")) {
+                scopeAnnotationSpec = AnnotationSpec.builder(FragmentScoped.class).build();
+            }
+            if (scopeAnnotationSpec != null) {
+                annotationSpecList.add(scopeAnnotationSpec);
+            }
+
+            // ContributesAndroidInjector annotation
             AnnotationSpec.Builder annotationSpecBuilder = AnnotationSpec.builder(ContributesAndroidInjector.class);
             for (TypeMirror typeMirror : moduleTypeMirrorList) {
                 annotationSpecBuilder.addMember("modules", "$T.class", ClassName.get(typeMirror));
             }
-            AnnotationSpec annotationSpec = annotationSpecBuilder.build();
-            // inject 函数
+            annotationSpecList.add(annotationSpecBuilder.build());
+
+            // inject method
             methodSpecList.add(
                     MethodSpec.methodBuilder("inject" + element.getSimpleName().toString())
                             .addModifiers(Modifier.ABSTRACT)
-                            .addAnnotation(annotationSpec)
+                            .addAnnotations(annotationSpecList)
                             .returns(TypeName.get(element.asType()))
                             .build()
             );

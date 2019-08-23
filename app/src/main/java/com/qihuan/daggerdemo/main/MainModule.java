@@ -1,5 +1,7 @@
 package com.qihuan.daggerdemo.main;
 
+import com.qihuan.annotationlib.dagger.ActivityScoped;
+
 import dagger.Binds;
 import dagger.Module;
 
@@ -12,6 +14,7 @@ import dagger.Module;
 @Module
 public abstract class MainModule {
 
+    @ActivityScoped
     @Binds
     abstract MainContract.Presenter bindMainPresenter(MainPresenter presenter);
 
